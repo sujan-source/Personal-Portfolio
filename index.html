@@ -114,6 +114,31 @@
   }
   .sectionhead .kw{color:var(--blue);}
 
+  /* Contact form */
+  .contact-intro{color:var(--muted); font-size:15px; margin-bottom:22px;}
+  .contact-form{display:flex; flex-direction:column; gap:16px;}
+  .contact-form .field{display:flex; flex-direction:column; gap:7px;}
+  .contact-form label{font-size:12.5px; color:var(--mint);}
+  .contact-form label::before{content:"$ "; color:var(--muted);}
+  .contact-form input,
+  .contact-form textarea{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:11px 14px; color:var(--text); font-family:'Inter',sans-serif; font-size:15px;
+    width:100%; resize:vertical;
+  }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder{color:var(--muted);}
+  .contact-form input:focus,
+  .contact-form textarea:focus{outline:none; border-color:var(--blue);}
+  .submit-btn{
+    align-self:flex-start; cursor:pointer;
+    background:var(--blue); color:var(--bg); border:none; border-radius:var(--radius);
+    padding:11px 20px; font-size:13.5px; font-weight:600;
+  }
+  .submit-btn:hover{background:var(--mint);}
+  .form-status{font-size:13px; color:var(--mint); min-height:18px;}
+  .form-status.error{color:#F85149;}
+
   /* Education */
   .edu-row{
     display:flex; justify-content:space-between; gap:14px;
@@ -223,6 +248,7 @@
   <a href="#skills">skills<span class="ext">.yml</span></a>
   <a href="#certifications">certs<span class="ext">.log</span></a>
   <a href="#profiles">profiles<span class="ext">.sh</span></a>
+  <a href="#contact">contact<span class="ext">.env</span></a>
 </nav>
 
 <main>
@@ -401,6 +427,31 @@
     </div>
   </section>
 
+  <section id="contact">
+    <div class="sectionhead"><span class="num mono">07</span><h2><span class="kw">function</span> connect()</h2></div>
+    <p class="contact-intro">Want to work together or just say hi? Drop your details and I&apos;ll get back to you.</p>
+    <form class="contact-form" id="contactForm" novalidate>
+      <div class="field">
+        <label for="cf-name" class="mono">name</label>
+        <input type="text" id="cf-name" name="name" autocomplete="name" placeholder="Your full name" required>
+      </div>
+      <div class="field">
+        <label for="cf-email" class="mono">email</label>
+        <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label for="cf-phone" class="mono">phone</label>
+        <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="+91 98765 43210" required>
+      </div>
+      <div class="field">
+        <label for="cf-message" class="mono">message</label>
+        <textarea id="cf-message" name="message" rows="4" placeholder="Tell me a bit about what you need..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn mono">send message ↗</button>
+      <p class="form-status mono" id="formStatus" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
   <footer>
     <p class="mono">// built by Sujan B — thanks for reading</p>
     <div class="flinks mono">
@@ -417,6 +468,37 @@
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
   }, {threshold:0.1});
   document.querySelectorAll('section').forEach(s=>{ s.classList.add('reveal'); obs.observe(s); });
+
+  const form = document.getElementById('contactForm');
+  const status = document.getElementById('formStatus');
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const phone = document.getElementById('cf-phone').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if(!name || !email || !phone){
+      status.textContent = '// please fill in your name, email and phone';
+      status.classList.add('error');
+      return;
+    }
+    if(!emailOk){
+      status.textContent = '// that email address looks invalid';
+      status.classList.add('error');
+      return;
+    }
+
+    status.classList.remove('error');
+    const subject = encodeURIComponent(`Portfolio contact from ${name}`);
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message || '(no message)'}`
+    );
+    window.location.href = `mailto:sujan.b2024csecs@sece.ac.in?subject=${subject}&body=${body}`;
+    status.textContent = '// opening your email app — thanks for reaching out!';
+    form.reset();
+  });
 </script>
 
 </body>
