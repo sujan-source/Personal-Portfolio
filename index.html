@@ -118,26 +118,51 @@
   .contact-intro{color:var(--muted); font-size:15px; margin-bottom:22px;}
   .contact-form{display:flex; flex-direction:column; gap:16px;}
   .contact-form .field{display:flex; flex-direction:column; gap:7px;}
-  .contact-form label{font-size:12.5px; color:var(--mint);}
+  .contact-form label{font-size:12.5px; color:var(--mint); transition:color .25s ease, transform .25s ease; transform-origin:left;}
   .contact-form label::before{content:"$ "; color:var(--muted);}
+  .contact-form .field:focus-within label{color:var(--blue); transform:translateX(4px);}
   .contact-form input,
   .contact-form textarea{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
     padding:11px 14px; color:var(--text); font-family:'Inter',sans-serif; font-size:15px;
     width:100%; resize:vertical;
+    transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
   }
   .contact-form input::placeholder,
   .contact-form textarea::placeholder{color:var(--muted);}
   .contact-form input:focus,
-  .contact-form textarea:focus{outline:none; border-color:var(--blue);}
+  .contact-form textarea:focus{
+    outline:none; border-color:var(--blue);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent);
+    transform:translateY(-1px);
+  }
+
+  /* Staggered entrance for each field when the section reveals */
+  #contact.in .contact-intro,
+  #contact.in .contact-form .field,
+  #contact.in .submit-btn{
+    animation:fieldIn .55s cubic-bezier(.2,.7,.3,1) both;
+  }
+  #contact.in .contact-intro{animation-delay:.05s;}
+  #contact.in .contact-form .field:nth-child(1){animation-delay:.14s;}
+  #contact.in .contact-form .field:nth-child(2){animation-delay:.22s;}
+  #contact.in .contact-form .field:nth-child(3){animation-delay:.30s;}
+  #contact.in .contact-form .field:nth-child(4){animation-delay:.38s;}
+  #contact.in .submit-btn{animation-delay:.46s;}
+  @keyframes fieldIn{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
+
   .submit-btn{
     align-self:flex-start; cursor:pointer;
     background:var(--blue); color:var(--bg); border:none; border-radius:var(--radius);
     padding:11px 20px; font-size:13.5px; font-weight:600;
+    transition:background .25s ease, transform .2s ease, box-shadow .25s ease;
   }
-  .submit-btn:hover{background:var(--mint);}
-  .form-status{font-size:13px; color:var(--mint); min-height:18px;}
+  .submit-btn:hover{background:var(--mint); transform:translateY(-2px); box-shadow:0 6px 18px color-mix(in srgb, var(--mint) 30%, transparent);}
+  .submit-btn:active{transform:translateY(0) scale(.98);}
+  .form-status{font-size:13px; color:var(--mint); min-height:18px; transition:opacity .3s ease;}
   .form-status.error{color:#F85149;}
+  .form-status.show{animation:statusIn .4s ease both;}
+  @keyframes statusIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
 
   /* Education */
   .edu-row{
@@ -471,6 +496,14 @@
 
   const form = document.getElementById('contactForm');
   const status = document.getElementById('formStatus');
+  function showStatus(msg, isError){
+    status.textContent = msg;
+    status.classList.toggle('error', !!isError);
+    // retrigger the entrance animation
+    status.classList.remove('show');
+    void status.offsetWidth;
+    status.classList.add('show');
+  }
   form.addEventListener('submit', (e)=>{
     e.preventDefault();
     const name = document.getElementById('cf-name').value.trim();
@@ -480,23 +513,20 @@
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     if(!name || !email || !phone){
-      status.textContent = '// please fill in your name, email and phone';
-      status.classList.add('error');
+      showStatus('// please fill in your name, email and phone', true);
       return;
     }
     if(!emailOk){
-      status.textContent = '// that email address looks invalid';
-      status.classList.add('error');
+      showStatus('// that email address looks invalid', true);
       return;
     }
 
-    status.classList.remove('error');
     const subject = encodeURIComponent(`Portfolio contact from ${name}`);
     const body = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message || '(no message)'}`
     );
     window.location.href = `mailto:sujan.b2024csecs@sece.ac.in?subject=${subject}&body=${body}`;
-    status.textContent = '// opening your email app — thanks for reaching out!';
+    showStatus('// opening your email app — thanks for reaching out!', false);
     form.reset();
   });
 </script>
