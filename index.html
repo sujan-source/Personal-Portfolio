@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sujan B — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D1117;
+    --panel:#12181F;
+    --card:#161B22;
+    --line:#232A34;
+    --text:#C9D1D9;
+    --muted:#7D8797;
+    --blue:#58A6FF;
+    --mint:#56D4A0;
+    --amber:#E3B341;
+    --radius:8px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  a{color:var(--blue); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--mint); outline-offset:3px; border-radius:3px;}
+
+  /* Top bar mimicking editor title bar */
+  .titlebar{
+    position:sticky; top:0; z-index:50;
+    background:var(--panel);
+    border-bottom:1px solid var(--line);
+    padding:12px 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .dots{display:flex; gap:6px;}
+  .dot{width:10px; height:10px; border-radius:50%;}
+  .dot.r{background:#F85149;} .dot.y{background:#E3B341;} .dot.g{background:#3FB950;}
+  .titlebar .path{font-size:12.5px; color:var(--muted); margin-left:6px;}
+
+  /* Tab nav */
+  .tabnav{
+    position:sticky; top:41px; z-index:49;
+    display:flex; overflow-x:auto; scrollbar-width:none;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .tabnav::-webkit-scrollbar{display:none;}
+  .tabnav a{
+    flex:0 0 auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    padding:10px 16px;
+    border-right:1px solid var(--line);
+    white-space:nowrap;
+    text-decoration:none;
+  }
+  .tabnav a .ext{color:var(--blue); opacity:.7;}
+  .tabnav a:hover{color:var(--text); background:var(--panel); text-decoration:none;}
+
+  main{max-width:760px; margin:0 auto; padding:0 20px;}
+
+  /* Hero */
+  .hero{padding:52px 0 36px;}
+  .hero .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px; color:var(--mint);
+    display:flex; align-items:center; gap:8px; margin-bottom:14px;
+  }
+  .hero .tag::before{content:"●"; font-size:9px; color:var(--mint); animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
+  .hero h1{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:800;
+    font-size:clamp(32px,8vw,52px);
+    letter-spacing:-0.02em;
+    color:#fff;
+  }
+  .hero h1 .amp{color:var(--blue);}
+  .hero p.role{
+    margin-top:10px; font-size:16px; color:var(--muted);
+  }
+  .hero p.role strong{color:var(--text); font-weight:600;}
+  .contactrow{
+    display:flex; flex-wrap:wrap; gap:10px; margin-top:22px;
+  }
+  .chip{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); border-radius:20px;
+    padding:7px 14px; color:var(--text);
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .chip:hover{border-color:var(--blue); text-decoration:none; color:var(--blue);}
+
+  section{padding:38px 0; border-top:1px solid var(--line);}
+  .sectionhead{
+    display:flex; align-items:baseline; gap:10px; margin-bottom:22px;
+  }
+  .sectionhead .num{font-family:'JetBrains Mono',monospace; color:var(--muted); font-size:13px;}
+  .sectionhead h2{
+    font-family:'JetBrains Mono',monospace; font-size:20px; color:#fff; font-weight:700;
+  }
+  .sectionhead .kw{color:var(--blue);}
+
+  /* Contact form */
+  .contact-intro{color:var(--muted); font-size:15px; margin-bottom:22px;}
+  .contact-form{display:flex; flex-direction:column; gap:16px;}
+  .contact-form .field{display:flex; flex-direction:column; gap:7px;}
+  .contact-form label{font-size:12.5px; color:var(--mint); transition:color .25s ease, transform .25s ease; transform-origin:left;}
+  .contact-form label::before{content:"$ "; color:var(--muted);}
+  .contact-form .field:focus-within label{color:var(--blue); transform:translateX(4px);}
+  .contact-form input,
+  .contact-form textarea{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:11px 14px; color:var(--text); font-family:'Inter',sans-serif; font-size:15px;
+    width:100%; resize:vertical;
+    transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder{color:var(--muted);}
+  .contact-form input:focus,
+  .contact-form textarea:focus{
+    outline:none; border-color:var(--blue);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent);
+    transform:translateY(-1px);
+  }
+
+  /* Staggered entrance for each field when the section reveals */
+  #contact.in .contact-intro,
+  #contact.in .contact-form .field,
+  #contact.in .submit-btn{
+    animation:fieldIn .55s cubic-bezier(.2,.7,.3,1) both;
+  }
+  #contact.in .contact-intro{animation-delay:.05s;}
+  #contact.in .contact-form .field:nth-child(1){animation-delay:.14s;}
+  #contact.in .contact-form .field:nth-child(2){animation-delay:.22s;}
+  #contact.in .contact-form .field:nth-child(3){animation-delay:.30s;}
+  #contact.in .contact-form .field:nth-child(4){animation-delay:.38s;}
+  #contact.in .submit-btn{animation-delay:.46s;}
+  @keyframes fieldIn{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
+
+  .submit-btn{
+    align-self:flex-start; cursor:pointer;
+    background:var(--blue); color:var(--bg); border:none; border-radius:var(--radius);
+    padding:11px 20px; font-size:13.5px; font-weight:600;
+    transition:background .25s ease, transform .2s ease, box-shadow .25s ease;
+  }
+  .submit-btn:hover{background:var(--mint); transform:translateY(-2px); box-shadow:0 6px 18px color-mix(in srgb, var(--mint) 30%, transparent);}
+  .submit-btn:active{transform:translateY(0) scale(.98);}
+  .form-status{font-size:13px; color:var(--mint); min-height:18px; transition:opacity .3s ease;}
+  .form-status.error{color:#F85149;}
+  .form-status.show{animation:statusIn .4s ease both;}
+  @keyframes statusIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
+
+  /* Education */
+  .edu-row{
+    display:flex; justify-content:space-between; gap:14px;
+    padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .edu-row:last-child{border-bottom:none;}
+  .edu-row .left strong{font-size:15px; color:var(--text); display:block;}
+  .edu-row .left span{font-size:13.5px; color:var(--muted);}
+  .edu-row .right{
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--mint);
+    text-align:right; white-space:nowrap;
+  }
+
+  /* Experience - comment block style */
+  .job{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 18px; margin-bottom:14px;
+  }
+  .job .jobtop{display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:8px;}
+  .job h3{font-size:15.5px; color:#fff;}
+  .job .co{color:var(--blue);}
+  .job .when{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .job p{font-size:14px; color:var(--muted); margin-top:4px;}
+  .job .cert-link{font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:10px; display:inline-block;}
+
+  /* Projects */
+  .proj{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; margin-bottom:14px;
+  }
+  .proj .ptop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;}
+  .proj h3{font-size:15.5px; color:#fff;}
+  .proj .date{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .stack{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 10px;}
+  .tagchip{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--mint);
+    background:rgba(86,212,160,0.08); border:1px solid rgba(86,212,160,0.25);
+    padding:3px 8px; border-radius:5px;
+  }
+  .proj p{font-size:14px; color:var(--muted);}
+  .proj .gh{font-family:'JetBrains Mono',monospace; font-size:12.5px; margin-top:10px; display:inline-flex; align-items:center; gap:5px;}
+
+  /* Skills */
+  .skillgrid{display:grid; grid-template-columns:1fr; gap:16px;}
+  .skillcat{}
+  .skillcat h4{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--amber);
+    margin-bottom:8px;
+  }
+  .skillcat .list{display:flex; flex-wrap:wrap; gap:7px;}
+  .skillpill{
+    font-size:13px; background:var(--card); border:1px solid var(--line);
+    padding:5px 11px; border-radius:5px; color:var(--text);
+  }
+
+  /* Certifications */
+  .cert{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:12px 0; border-bottom:1px solid var(--line);
+  }
+  .cert:last-child{border-bottom:none;}
+  .cert .name{font-size:14px;}
+  .cert .name .issuer{color:var(--muted); font-size:12.5px;}
+  .cert .right{display:flex; align-items:center; gap:12px; flex-shrink:0;}
+  .cert .yr{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .cert .view{font-family:'JetBrains Mono',monospace; font-size:12px;}
+
+  /* Profiles */
+  .profiles{display:grid; grid-template-columns:1fr; gap:12px;}
+  .profcard{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .profcard .pname{font-family:'JetBrains Mono',monospace; font-size:14px; color:#fff; font-weight:700;}
+  .profcard .pstat{font-size:13px; color:var(--muted); margin-top:3px;}
+  .profcard .arrow{font-family:'JetBrains Mono',monospace; color:var(--blue); font-size:18px;}
+
+  footer{
+    padding:36px 0 60px; text-align:center;
+    border-top:1px solid var(--line);
+  }
+  footer .mono{font-size:12.5px; color:var(--muted);}
+  footer .flinks{margin-top:12px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;}
+
+  @media(min-width:640px){
+    .skillgrid{grid-template-columns:1fr 1fr;}
+    .profiles{grid-template-columns:1fr 1fr 1fr;}
+    .profcard{flex-direction:column; align-items:flex-start;}
+  }
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+  <span class="path mono">~/sujan-b/portfolio</span>
+</div>
+
+<nav class="tabnav mono" aria-label="Section navigation">
+  <a href="#about">about<span class="ext">.md</span></a>
+  <a href="#education">education<span class="ext">.json</span></a>
+  <a href="#experience">experience<span class="ext">.js</span></a>
+  <a href="#projects">projects<span class="ext">.tsx</span></a>
+  <a href="#skills">skills<span class="ext">.yml</span></a>
+  <a href="#certifications">certs<span class="ext">.log</span></a>
+  <a href="#profiles">profiles<span class="ext">.sh</span></a>
+  <a href="#contact">contact<span class="ext">.env</span></a>
+</nav>
+
+<main>
+
+  <section class="hero" id="about">
+    <h1>Sujan B<span class="amp">.</span></h1>
+    <p class="role"><strong>B.E. Computer Science &amp; Engineering</strong> — Sri Eshwar College of Engineering, Coimbatore. Full-stack developer who builds with the MERN stack, ships side projects, and grinds DSA on the side.</p>
+    <div class="contactrow">
+      <a class="chip" href="tel:9361372617">📞 9361372617</a>
+      <a class="chip" href="mailto:sujan.b2024csecs@sece.ac.in">✉ sujan.b2024csecs@sece.ac.in</a>
+      <a class="chip" href="https://www.linkedin.com/in/sujan-b-a66b32313/" target="_blank" rel="noopener">in/sujan-b</a>
+      <a class="chip" href="https://github.com/sujan-source" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="sectionhead"><span class="num mono">01</span><h2><span class="kw">const</span> education</h2></div>
+    <div class="edu-row">
+      <div class="left"><strong>BE, Computer Science &amp; Engineering</strong><span>Sri Eshwar College of Engineering, Coimbatore, Tamil Nadu · 2024–2028</span></div>
+      <div class="right">CGPA 7.01<br><span style="color:var(--muted)">(4th sem)</span></div>
+    </div>
+    <div class="edu-row">
+      <div class="left"><strong>HSC</strong><span>Vidyaa Vikas International School · 2021–2022</span></div>
+      <div class="right">67.4%</div>
+    </div>
+    <div class="edu-row">
+      <div class="left"><strong>SSLC</strong><span>Vidyaa Vikas International School · 2023–2024</span></div>
+      <div class="right">83.2%</div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="sectionhead"><span class="num mono">02</span><h2><span class="kw">function</span> experience()</h2></div>
+
+    <div class="job">
+      <div class="jobtop">
+        <h3>Full Stack Intern — <span class="co">RamPex Technologies</span></h3>
+        <span class="when">Dec 2026</span>
+      </div>
+      <p>One-month MERN stack internship — hands-on experience building full-stack applications end to end.</p>
+      <a class="cert-link" href="https://drive.google.com/file/d/1Lf3eUPxyZ0DVKKraR5U7ujp12fEu6Y8x/view?usp=drivesdk" target="_blank" rel="noopener">→ view certificate</a>
+    </div>
+
+    <div class="job">
+      <div class="jobtop">
+        <h3>Web Development Intern — <span class="co">Corizo</span></h3>
+        <span class="when">Jun 2026</span>
+      </div>
+      <p>Built responsive web applications and strengthened HTML, CSS, and JavaScript fundamentals through hands-on, collaborative projects.</p>
+      <a class="cert-link" href="https://drive.google.com/file/d/1RHAloOY9SVb3hxBFnImVueLvZQmr3WHn/view?usp=drivesdk" target="_blank" rel="noopener">→ view certificate</a>
+    </div>
+
+    <div class="job">
+      <div class="jobtop">
+        <h3>App Development Intern — <span class="co">CodeAlpha</span></h3>
+        <span class="when">Feb 2026</span>
+      </div>
+      <p>One-month virtual internship building functional mobile applications; earned a Certificate of Completion and Letter of Recommendation.</p>
+      <a class="cert-link" href="https://drive.google.com/file/d/1hmOS6prtaDmpE6YUvK_z1Tn36VuJe9rY/view?usp=drivesdk" target="_blank" rel="noopener">→ view certificate</a>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="sectionhead"><span class="num mono">03</span><h2><span class="kw">export</span> projects</h2></div>
+
+    <div class="proj">
+      <div class="ptop"><h3>E-Commerce Website</h3><span class="date">Jul 2026</span></div>
+      <div class="stack">
+        <span class="tagchip">HTML</span><span class="tagchip">CSS</span><span class="tagchip">JavaScript</span><span class="tagchip">React.js</span><span class="tagchip">Node.js</span><span class="tagchip">MongoDB</span>
+      </div>
+      <p>Responsive MERN e-commerce app with secure user authentication, product management, a shopping cart, and RESTful APIs on a scalable full-stack architecture.</p>
+      <a class="gh" href="https://github.com/sujan-source/Corizo_Ecommerce-website" target="_blank" rel="noopener">↗ view on GitHub</a>
+    </div>
+
+    <div class="proj">
+      <div class="ptop"><h3>Interview Scheduling System</h3><span class="date">Dec 2025</span></div>
+      <div class="stack">
+        <span class="tagchip">HTML</span><span class="tagchip">CSS</span><span class="tagchip">JavaScript</span><span class="tagchip">React.js</span><span class="tagchip">Node.js</span><span class="tagchip">MongoDB</span>
+      </div>
+      <p>Role-based scheduling app — admins schedule interviews, interviewers update status, and candidates view schedules, with role-based access control that cut manual scheduling effort.</p>
+      <a class="gh" href="https://github.com/sujan-source/Interview-Schedule-mern-stack-internship" target="_blank" rel="noopener">↗ view on GitHub</a>
+    </div>
+
+    <div class="proj">
+      <div class="ptop"><h3>Food Freshness Detection System</h3><span class="date">Feb 2026</span></div>
+      <div class="stack">
+        <span class="tagchip">Python</span><span class="tagchip">Flask</span><span class="tagchip">MongoDB</span><span class="tagchip">JavaScript</span>
+      </div>
+      <p>Image classification system that assesses food quality and freshness from user-uploaded images using pre-trained computer vision models and transfer learning.</p>
+      <a class="gh" href="https://github.com/sujan-source/Food-Freshness-Analyzer-Personal-Project" target="_blank" rel="noopener">↗ view on GitHub</a>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="sectionhead"><span class="num mono">04</span><h2><span class="kw">interface</span> skills</h2></div>
+    <div class="skillgrid">
+      <div class="skillcat">
+        <h4># languages</h4>
+        <div class="list">
+          <span class="skillpill">Python</span><span class="skillpill">C</span><span class="skillpill">C++</span><span class="skillpill">Java</span><span class="skillpill">JavaScript</span><span class="skillpill">HTML</span><span class="skillpill">CSS</span>
+        </div>
+      </div>
+      <div class="skillcat">
+        <h4># web development</h4>
+        <div class="list">
+          <span class="skillpill">Frontend: HTML/CSS/JS</span><span class="skillpill">Backend: MongoDB</span>
+        </div>
+      </div>
+      <div class="skillcat">
+        <h4># tools &amp; platforms</h4>
+        <div class="list">
+          <span class="skillpill">Git</span><span class="skillpill">VS Code</span><span class="skillpill">PyCharm</span><span class="skillpill">Canva</span><span class="skillpill">PowerPoint</span>
+        </div>
+      </div>
+      <div class="skillcat">
+        <h4># core concepts</h4>
+        <div class="list">
+          <span class="skillpill">DSA</span><span class="skillpill">OOP</span><span class="skillpill">DBMS</span><span class="skillpill">Network Security</span><span class="skillpill">Cybersecurity Fundamentals</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="certifications">
+    <div class="sectionhead"><span class="num mono">05</span><h2><span class="kw">tail -f</span> certs.log</h2></div>
+
+    <div class="cert">
+      <div class="name">Mastering Data Structures &amp; Algorithms in C/C++<br><span class="issuer">Abdul Bari · Udemy</span></div>
+      <div class="right"><span class="yr">2025</span><a class="view" href="https://udemy-certificate.s3.amazonaws.com/pdf/UC-dd681393-8164-4e8e-bdd4-8434bd4d08d2.pdf" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+    <div class="cert">
+      <div class="name">Python Programming Masterclass<br><span class="issuer">Makeintern Course · Udemy</span></div>
+      <div class="right"><span class="yr">2025</span><a class="view" href="https://udemy-certificate.s3.amazonaws.com/pdf/UC-558ba41e-6ea7-45bc-8c07-8b91e5ad5917.pdf" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+    <div class="cert">
+      <div class="name">C Programming<br><span class="issuer">Gurvi</span></div>
+      <div class="right"><span class="yr">2024</span><a class="view" href="https://www.linkedin.com/posts/sujan-b-a66b32313_share-7275168943227514881-E2u6/?utm_source=share&utm_medium=member_android&rcm=ACoAAE-5Om4Bhyfe_oaNIC_j8cZ9cfvHu3e2c0c" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+    <div class="cert">
+      <div class="name">Introduction to Cybersecurity<br><span class="issuer">Credly</span></div>
+      <div class="right"><span class="yr">2025</span><a class="view" href="https://www.credly.com/badges/5caa7f99-107d-470d-bf48-42faca64e706" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+    <div class="cert">
+      <div class="name">Web Development<br><span class="issuer">MyCaptain</span></div>
+      <div class="right"><span class="yr">2026</span><a class="view" href="https://drive.google.com/file/d/12DeOJwpPW3iBFnDyDwFdtE8AJNDd3dkj/view?usp=drivesdk" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+    <div class="cert">
+      <div class="name">GenAI Powered Data Analytics Job Simulation<br><span class="issuer"></span></div>
+      <div class="right"><span class="yr">2025</span><a class="view" href="https://drive.google.com/file/d/1VqJ-GVdhw-8R881pWVw0J41vzXQBa5Zq/view?usp=drivesdk" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+    <div class="cert">
+      <div class="name">Web Development<br><span class="issuer">Corizo</span></div>
+      <div class="right"><span class="yr">2026</span><a class="view" href="https://drive.google.com/file/d/1JUKJA0Ds2J9Dn64PN23tOMPKsGlR5qRH/view?usp=drivesdk" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+    <div class="cert">
+      <div class="name">Network Defense Essentials<br><span class="issuer">EC-Council</span></div>
+      <div class="right"><span class="yr">2026</span><a class="view" href="https://drive.google.com/file/d/1nZ4mHneb3KK58z2l58CRca6vOhCetwVU/view?usp=drivesdk" target="_blank" rel="noopener">view ↗</a></div>
+    </div>
+  </section>
+
+  <section id="profiles">
+    <div class="sectionhead"><span class="num mono">06</span><h2><span class="kw">$</span> coding --profiles</h2></div>
+    <div class="profiles">
+      <a class="profcard" href="https://leetcode.com/u/sujan_-123/" target="_blank" rel="noopener">
+        <div><div class="pname">LeetCode</div><div class="pstat">285+ solved · rank 474,406</div></div>
+        <span class="arrow">↗</span>
+      </a>
+      <a class="profcard" href="https://www.skillrack.com/faces/resume.xhtml?id=515133&key=90b636388d80bd07b8b946ff373bfd75a50d5354" target="_blank" rel="noopener">
+        <div><div class="pname">SkillRack</div><div class="pstat">940+ solved · 275+ bronze badges</div></div>
+        <span class="arrow">↗</span>
+      </a>
+      <a class="profcard" href="https://www.hackerrank.com/profile/sujan_b2024csecs" target="_blank" rel="noopener">
+        <div><div class="pname">HackerRank</div><div class="pstat">Java ★5 · SQL &amp; Python verified</div></div>
+        <span class="arrow">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="sectionhead"><span class="num mono">07</span><h2><span class="kw">function</span> connect()</h2></div>
+    <p class="contact-intro">Want to work together or just say hi? Drop your details and I&apos;ll get back to you.</p>
+    <form class="contact-form" id="contactForm" novalidate>
+      <div class="field">
+        <label for="cf-name" class="mono">name</label>
+        <input type="text" id="cf-name" name="name" autocomplete="name" placeholder="Your full name" required>
+      </div>
+      <div class="field">
+        <label for="cf-email" class="mono">email</label>
+        <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label for="cf-phone" class="mono">phone</label>
+        <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="+91 98765 43210" required>
+      </div>
+      <div class="field">
+        <label for="cf-message" class="mono">message</label>
+        <textarea id="cf-message" name="message" rows="4" placeholder="Tell me a bit about what you need..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn mono">send message ↗</button>
+      <p class="form-status mono" id="formStatus" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <footer>
+    <p class="mono">// built by Sujan B — thanks for reading</p>
+    <div class="flinks mono">
+      <a href="mailto:sujan.b2024csecs@sece.ac.in">email</a>
+      <a href="https://www.linkedin.com/in/sujan-b-a66b32313/" target="_blank" rel="noopener">linkedin</a>
+      <a href="https://github.com/sujan-source" target="_blank" rel="noopener">github</a>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+  }, {threshold:0.1});
+  document.querySelectorAll('section').forEach(s=>{ s.classList.add('reveal'); obs.observe(s); });
+
+  const form = document.getElementById('contactForm');
+  const status = document.getElementById('formStatus');
+  function showStatus(msg, isError){
+    status.textContent = msg;
+    status.classList.toggle('error', !!isError);
+    // retrigger the entrance animation
+    status.classList.remove('show');
+    void status.offsetWidth;
+    status.classList.add('show');
+  }
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const phone = document.getElementById('cf-phone').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if(!name || !email || !phone){
+      showStatus('// please fill in your name, email and phone', true);
+      return;
+    }
+    if(!emailOk){
+      showStatus('// that email address looks invalid', true);
+      return;
+    }
+
+    const subject = encodeURIComponent(`Portfolio contact from ${name}`);
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message || '(no message)'}`
+    );
+    window.location.href = `mailto:sujan.b2024csecs@sece.ac.in?subject=${subject}&body=${body}`;
+    showStatus('// opening your email app — thanks for reaching out!', false);
+    form.reset();
+  });
+</script>
+
+</body>
+</html>
